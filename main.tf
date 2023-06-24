@@ -11,7 +11,7 @@ module "eks" {
   source = "./modules/eks_cluster"
 
   cluster_name    = "<EKS 클러스터 명>"
-  cluster_version = "1.26"
+  cluster_version = "<쿠버네티스 버전>"
   vpc_id          = module.eks_vpc.vpc_id
   subnet_ids      = module.eks_vpc.subnet_ids
 }

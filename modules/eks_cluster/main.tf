@@ -45,12 +45,7 @@ module "eks" {
       userarn  = "arn:aws:iam::<유저 고유 ID>:user/admin"
       username = "admin"
       groups   = ["system:masters"]
-    },
-    {
-      userarn  = "arn:aws:iam::<유저 고유 ID>:user/kde"
-      username = "kde"
-      groups   = ["system:masters"]
-    },
+    }
   ]
 
   aws_auth_accounts = [
