@@ -16,10 +16,10 @@ module "eks" {
   subnet_ids      = module.eks_vpc.subnet_ids
 }
 
-module "web" {
-  source = "./modules/web"
+# module "web" {
+#   source = "./modules/web"
 
-  frontend_bucket_name = "<S3 웹 사이트 버킷 명>"
-  index_document       = "index.html"
-  error_document       = "index.html"
-}
+#   frontend_bucket_name = "<S3 웹 사이트 버킷 명>"
+#   index_document       = "index.html"
+#   error_document       = "index.html"
+# }
