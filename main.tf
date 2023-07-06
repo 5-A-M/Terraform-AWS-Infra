@@ -1,25 +1,38 @@
 module "eks_vpc" {
   source = "./modules/vpc"
 
-  vpc_name        = "<VPC 명>"
-  vpc_cidr        = "10.0.0.0/16"
-  public_subnets  = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
-  private_subnets = ["10.0.4.0/24", "10.0.5.0/24", "10.0.6.0/24"]
+  vpc_name        = var.vpc_name
+  vpc_cidr        = var.vpc_cidr
+  public_subnets  = var.public_subnets
+  private_subnets = var.private_subnets
+  cluster_name    = var.cluster_name
 }
 
 module "eks" {
   source = "./modules/eks_cluster"
 
-  cluster_name    = "<EKS 클러스터 명>"
-  cluster_version = "<쿠버네티스 버전>"
-  vpc_id          = module.eks_vpc.vpc_id
-  subnet_ids      = module.eks_vpc.subnet_ids
+  vpc_id     = module.eks_vpc.vpc_id
+  subnet_ids = module.eks_vpc.subnet_ids
+
+  cluster_name              = var.cluster_name
+  cluster_version           = var.cluster_version
+  manage_aws_auth_configmap = var.manage_aws_auth_configmap
+  aws_auth_users            = var.aws_auth_users
+  aws_auth_accounts         = var.aws_auth_accounts
+
+  argocd_config = var.argocd_config
+  # lb_controller_service_account_name = "aws-load-balancer-controller"
 }
 
 # module "web" {
 #   source = "./modules/web"
 
-#   frontend_bucket_name = "<S3 웹 사이트 버킷 명>"
-#   index_document       = "index.html"
-#   error_document       = "index.html"
+#   frontend_bucket_name = "5am-dev-web"
+# }
+
+# module "tfstate_store" {
+#   source = "./modules/tfstate_store"
+
+#   backend_bucket_name    = "5am-eks-terraform-state"
+#   backend_ddb_table_name = "5am-eks-terraform-lock"
 # }

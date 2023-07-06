@@ -1,8 +1,12 @@
 locals {
-  cluster_name    = var.cluster_name
-  cluster_version = var.cluster_version
-  vpc_id          = var.vpc_id
-  subnet_ids      = var.subnet_ids
+  cluster_name              = var.cluster_name
+  cluster_version           = var.cluster_version
+  manage_aws_auth_configmap = var.manage_aws_auth_configmap
+  aws_auth_users            = var.aws_auth_users
+  aws_auth_accounts         = var.aws_auth_accounts
+
+  vpc_id     = var.vpc_id
+  subnet_ids = var.subnet_ids
 }
 
 module "eks" {
@@ -28,27 +32,26 @@ module "eks" {
     initial = {
       name = "node-group-1"
 
-      instance_types = ["t3.medium"]
+      instance_types = ["t3.large"]
       capacity_type  = "SPOT"
 
-      min_size     = 2
+      min_size     = 3
       max_size     = 3
-      desired_size = 2
+      desired_size = 3
     }
   }
 
+  # Karpenter 매칭을 위한 태그 설정
+  node_security_group_tags = {
+    "karpenter.sh/discovery" = local.cluster_name
+  }
+
+  # IRSA / OIDC 구성: EKS에게 AWS 리소스 인가를 부여하기 위해 설정
+  enable_irsa = true
+
   # EKS RBAC는 IAM과 연동되어 있기 때문에, 생성자 외 다른 유저 접근 시 추가 권한 부여 필요
-  manage_aws_auth_configmap = true
+  manage_aws_auth_configmap = local.manage_aws_auth_configmap
 
-  aws_auth_users = [
-    {
-      userarn  = "arn:aws:iam::<유저 고유 ID>:user/admin"
-      username = "admin"
-      groups   = ["system:masters"]
-    }
-  ]
-
-  aws_auth_accounts = [
-    "<유저 고유 ID>"
-  ]
+  aws_auth_users    = local.manage_aws_auth_configmap == true ? local.aws_auth_users : null
+  aws_auth_accounts = local.manage_aws_auth_configmap == true ? local.aws_auth_accounts : null
 }

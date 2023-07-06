@@ -4,6 +4,8 @@ locals {
   vpc_cidr        = var.vpc_cidr
   private_subnets = var.private_subnets
   public_subnets  = var.public_subnets
+
+  cluster_name = var.cluster_name
 }
 
 module "vpc" {
@@ -21,14 +23,15 @@ module "vpc" {
   enable_nat_gateway   = true
   enable_dns_hostnames = true
 
-  # 로드벨런서 서비스 실행 시 ELB 서비스가 할당될 수 있도록 서브넷에 태그 추가 필수
+  # 로드벨런서 서비스 실행 시 ELB 리소스가 할당될 수 있도록 서브넷에 태그 추가 필수
   public_subnet_tags = {
-    "kubernetes.io/cluster/5am-eks-cluster" = "shared"
-    "kubernetes.io/role/elb"                = 1
+    "kubernetes.io/cluster/${local.cluster_name}" = "shared"
+    "kubernetes.io/role/elb"                      = 1
   }
 
   private_subnet_tags = {
-    "kubernetes.io/cluster/5am-eks-cluster" = "shared"
-    "kubernetes.io/role/internal-elb"       = 1
+    "kubernetes.io/cluster/${local.cluster_name}" = "shared"
+    "kubernetes.io/role/internal-elb"             = 1
+    "karpenter.sh/discovery"                      = local.cluster_name # Karpenter auto-discovery를 위한 서브넷에 태그 추가
   }
 }

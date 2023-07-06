@@ -1,7 +1,5 @@
 locals {
   frontend_bucket_name = var.frontend_bucket_name
-  index_document       = var.index_document
-  error_document       = var.error_document
 }
 
 resource "aws_s3_bucket" "static_web_hosting_bucket" {
@@ -21,11 +19,11 @@ resource "aws_s3_bucket_website_configuration" "static_web_hosting_bucket" {
   bucket = aws_s3_bucket.static_web_hosting_bucket.id
 
   index_document {
-    suffix = local.index_document
+    suffix = "index.html"
   }
 
   error_document {
-    key = local.error_document
+    key = "index.html"
   }
 }
 
