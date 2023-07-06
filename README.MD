@@ -1,12 +1,13 @@
-# infra
+# 5am IAC
 
 ---
 
-테라폼으로 구축한 5AM 프로젝트의 인프라로 구축사항은 아래와 같습니다.
+테라폼으로 구축한 5AM 프로젝트 인프라
 
-- EKS 클러스터 & VPC
-- S3 정적 웹 호스팅(EKS 테스트를 위해 잠시 제거)
-- tfstate를 저장할 backend 스토리지(EKS 테스트를 위해 잠시 제거)
+- EKS 클러스터
+- EKS 클러스터 전용 VPC
+- 정적 웹 호스팅 용 S3
+- tfstate를 저장할 backend 스토리지
 
 프로젝트 간 리소스들은 지속적으로 추가될 것입니다.
 
@@ -18,11 +19,37 @@
 - terraform-aws-modules/vpc: 5.0.0
 - kubernetes: 1.26
 
-## Clone하여 테스트할 경우 수정해야할 변수
+## 변수 모듈화
+
+각 리소스 모듈(modules 폴더)의 동적 변수들은 루트 디렉토리의 `variable.tf`에서 변수를 지정하고, `main.tf`의 모듈에서 통해 주입됩니다. `variable.tf`에서 지정된 변수들을 할당하는 방법은 `terraform.tfvars`파일을 생성하여 해당 파일에 선언해주면 됩니다.
+
+`terraform.tfvars`은 민감한 정보(ex. argocd 비밀번호, 클러스터 RBAC 데이터 등)을 최대한 노출시키지 않기 위해 퍼블릭 깃헙에 올리지 않았습니다. 해당 파일 내용의 예시로는 다음과 같습니다.
 
 ```
-├── main.tf # 각 리소스 명
-├── modules
-│   ├── eks_cluster
-│   │   ├── main.tf # EKS RBAC 접근 권한 제어
+vpc_name        = "5am-cluster-vpc"
+vpc_cidr        = "10.0.0.0/16"
+private_subnets = ["10.0.4.0/24", "10.0.5.0/24", "10.0.6.0/24"]
+
+cluster_name    = "5am-cluster"
+cluster_version = "1.26"
+
+argocd_config = {
+  namespace      = "argocd"
+  release_name   = "argocd"
+  admin_password = "qwer1234"
+  enable_dex     = true
+  insecure       = false
+}
+
+aws_auth_users = [
+  {
+    userarn  = "arn:aws:iam::xxxxxxxxxx:user/system-manager"
+    username = "system-manager"
+    groups   = ["system:masters"]
+  }, ...
+]
+
+...
 ```
+
+테라폼 실행 시 `terraform.tfvars`파일이 반드시 필요하오니, 해당 파일관련해서는 위키 확인바랍니다. 추가 문의사항은 담당자에게 문의바랍니다.
