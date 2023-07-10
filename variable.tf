@@ -36,8 +36,6 @@ variable "private_subnets" {
 
 variable "argocd_config" {
   type = object({
-    namespace      = string
-    release_name   = string
     admin_password = string
     enable_dex     = bool
     insecure       = bool
@@ -45,8 +43,6 @@ variable "argocd_config" {
   description = "argocd 차트 설정 값"
 
   default = {
-    namespace      = "argocd"
-    release_name   = "argocd"
     admin_password = ""
     enable_dex     = true
     insecure       = false

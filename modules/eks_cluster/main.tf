@@ -32,14 +32,18 @@ module "eks" {
     initial = {
       name = "node-group-1"
 
-      instance_types = ["t3.large"]
-      capacity_type  = "SPOT"
+      instance_types = ["m5.xlarge"]
+      capacity_type  = "ON_DEMAND"
 
-      min_size     = 3
-      max_size     = 3
-      desired_size = 3
+      min_size     = 2
+      max_size     = 4
+      desired_size = 2
     }
   }
+
+  # control plane 로깅(cloudwatch) 기본 값: audit, api, authenticator
+  # controllerManager와 scheduler 추가가 필요한 경우에 사용, 필요없으면 주석처리
+  cluster_enabled_log_types = ["audit", "api", "authenticator", "controllerManager", "scheduler"]
 
   # Karpenter 매칭을 위한 태그 설정
   node_security_group_tags = {

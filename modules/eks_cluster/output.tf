@@ -17,3 +17,8 @@ output "cluster_id" {
   description = "EKS 클러스터 id"
   value       = module.eks.cluster_id
 }
+
+output "oidc_provider_arn" {
+  description = "EKS OIDC Provider"
+  value       = module.eks.oidc_provider_arn
+}

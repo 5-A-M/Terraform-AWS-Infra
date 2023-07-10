@@ -24,6 +24,18 @@ module "eks" {
   # lb_controller_service_account_name = "aws-load-balancer-controller"
 }
 
+module "efs" {
+  source = "./modules/efs"
+
+  vpc_id     = module.eks_vpc.vpc_id
+  subnet_ids = module.eks_vpc.subnet_ids
+  vpc_cidr   = var.vpc_cidr
+
+  cluster_endpoint = module.eks.cluster_endpoint
+  cluster_name     = module.eks.cluster_name
+  cluster_oidc_provider = module.eks.oidc_provider_arn
+}
+
 # module "web" {
 #   source = "./modules/web"
 
