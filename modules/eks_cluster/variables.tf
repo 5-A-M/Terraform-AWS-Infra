@@ -8,4 +8,3 @@ variable "vpc_id" {}
 variable "subnet_ids" {}
 
 variable "argocd_config" {}
-# variable "lb_controller_service_account_name" {}

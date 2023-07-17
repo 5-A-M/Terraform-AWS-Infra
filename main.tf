@@ -21,7 +21,6 @@ module "eks" {
   aws_auth_accounts         = var.aws_auth_accounts
 
   argocd_config = var.argocd_config
-  # lb_controller_service_account_name = "aws-load-balancer-controller"
 }
 
 module "efs" {
@@ -31,8 +30,8 @@ module "efs" {
   subnet_ids = module.eks_vpc.subnet_ids
   vpc_cidr   = var.vpc_cidr
 
-  cluster_endpoint = module.eks.cluster_endpoint
-  cluster_name     = module.eks.cluster_name
+  cluster_endpoint      = module.eks.cluster_endpoint
+  cluster_name          = module.eks.cluster_name
   cluster_oidc_provider = module.eks.oidc_provider_arn
 }
 

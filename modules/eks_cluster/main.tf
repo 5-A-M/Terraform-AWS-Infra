@@ -45,8 +45,8 @@ module "eks" {
   # controllerManager와 scheduler 추가가 필요한 경우에 사용, 필요없으면 주석처리
   cluster_enabled_log_types = ["audit", "api", "authenticator", "controllerManager", "scheduler"]
 
-  # Karpenter 매칭을 위한 태그 설정
-  node_security_group_tags = {
+  # Karpenter Discovery를 위한 태그 설정
+  tags = {
     "karpenter.sh/discovery" = local.cluster_name
   }
 

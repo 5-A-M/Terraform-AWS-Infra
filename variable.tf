@@ -49,13 +49,6 @@ variable "argocd_config" {
   }
 }
 
-variable "lb_controller_service_account_name" {
-  type        = string
-  description = "AWS LB controller용 서비스 어카운트 명"
-
-  default = "aws-load-balancer-controller"
-}
-
 variable "manage_aws_auth_configmap" {
   type        = bool
   description = "Terraform에서 클러스터 RBAC 관리 여부"
